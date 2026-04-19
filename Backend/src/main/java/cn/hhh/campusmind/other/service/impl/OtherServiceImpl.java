@@ -18,11 +18,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class OtherServiceImpl implements IOtherService {
 
-    @Value("${hh-campus-mind.sts.role-arn}")
+    @Value("${hhh-campus-mind.sts.role-arn}")
     private String roleArn;
-    @Value("${hh-campus-mind.sts.access-key-id}")
+    @Value("${hhh-campus-mind.sts.access-key-id}")
     private String accessKeyId;
-    @Value("${hh-campus-mind.sts.access-key-secret}")
+    @Value("${hhh-campus-mind.sts.access-key-secret}")
     private String accessKeySecret;
 
     private final AliOssProperties aliOssProperties;
