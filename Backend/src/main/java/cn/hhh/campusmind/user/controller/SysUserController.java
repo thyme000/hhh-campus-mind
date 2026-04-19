@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2026-04-19
  */
 @RestController
-@RequestMapping("/sys-user")
+@RequestMapping("/user")
 public class SysUserController {
 
 }
