@@ -12,6 +12,6 @@ public class OssStsVO {
     private String region;
     private String bucket;
     private String endpoint;
-    // 允许上传目录，如 uploads/video/123/
+    // 允许上传目录
     private String dir;
 }

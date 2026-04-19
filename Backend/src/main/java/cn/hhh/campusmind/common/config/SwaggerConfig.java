@@ -22,7 +22,7 @@ public class SwaggerConfig {
                         .description("hhh-campus-mind 后端接口文档")
                         .version("v1.0.0")
                         .contact(new Contact()
-                                .name("thyme")
+                                .name("hhh")
                         )
                 )
                 .addSecurityItem(new SecurityRequirement().addList(AUTH_HEADER))
