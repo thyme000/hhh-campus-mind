@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:12-alpine
+    image: pgvector/pgvector:pg12
     container_name: hhh-postgres
     restart: unless-stopped
     environment:

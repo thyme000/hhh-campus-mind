@@ -1,5 +1,6 @@
 package cn.hhh.campusmind.common.handler;
 
+import cn.hhh.campusmind.common.exceptions.NoAuthException;
 import cn.hhh.campusmind.common.exceptions.OssException;
 import cn.hhh.campusmind.common.result.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,17 @@ public class GlobalExceptionHandler {
     public Result<?> handleBizException(OssException e) {
         log.error("对象存储异常: {}", e.getMessage(), e);
         return Result.fail("对象存储异常");
+    }
+
+    /**
+     * 处理用户登录状态异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(NoAuthException.class)
+    public Result<?> handleNoAuthException(NoAuthException e) {
+        log.error("无权限异常: {}", e.getMessage(), e);
+        return Result.fail("无权限异常");
     }
 
     // 处理其他异常类型

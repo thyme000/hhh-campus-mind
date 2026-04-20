@@ -1,5 +1,7 @@
 package cn.hhh.campusmind.user.domain.po;
 
+import cn.hhh.campusmind.user.domain.enums.StatusEnum;
+import cn.hhh.campusmind.user.domain.enums.UserType;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDateTime;
@@ -44,17 +46,12 @@ public class SysUser implements Serializable {
     /**
      * 角色：student/teacher/admin
      */
-    private String role;
+    private UserType role;
 
     /**
      * 账号状态：active/disabled/locked
      */
-    private String status;
-
-    /**
-     * 昵称（展示用）
-     */
-    private String nickname;
+    private StatusEnum status;
 
     /**
      * 头像URL（OSS objectKey）
@@ -70,6 +67,11 @@ public class SysUser implements Serializable {
      * 手机号是否已验证
      */
     private Boolean phoneVerified;
+
+    /**
+     * 学院id (可空)
+     */
+    private Long collegeId;
 
     /**
      * 最近登录时间
