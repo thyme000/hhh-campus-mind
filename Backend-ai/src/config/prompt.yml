@@ -1,0 +1,2 @@
+profile_update_prompt.txt: src/prompt/profile_update_prompt.txt
+get_student_reference_prompt.txt: src/prompt/get_student_reference_prompt.txt

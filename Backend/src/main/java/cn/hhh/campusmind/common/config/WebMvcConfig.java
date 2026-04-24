@@ -26,6 +26,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns(            // 放行不需要登录的接口
                         "/login",
                         "/register",
+                        "/internal/**",
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
                         "/captcha",

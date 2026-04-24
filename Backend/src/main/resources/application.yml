@@ -82,3 +82,4 @@ hhh-campus-mind:
     access-key-secret: ${STS_ACCESS_KEY_SECRET}
     role-arn: ${STS_ROLE_ARN}
 
+internal-api-token: ${INTERNAL_API_TOKEN:}

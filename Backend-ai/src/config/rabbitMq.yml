@@ -1,0 +1,4 @@
+# 消息配置
+PROFILE_UPDATE_EXCHANGE: student_profile_update_exchange
+PROFILE_UPDATE_QUEUE: student_profile_update_queue
+PROFILE_UPDATE_ROUTING_KEY: student_profile_update_routing_key
