@@ -5,3 +5,4 @@ backend_config = load_config(config_path=get_abstract_path('src/config/backend.y
 model_config = load_config(config_path=get_abstract_path('src/config/model.yml'))
 prompt_config = load_config(config_path=get_abstract_path('src/config/prompt.yml'))
 rabbitmq_config = load_config(config_path=get_abstract_path('src/config/rabbitmq.yml'))
+redis_config = load_config(config_path=get_abstract_path('src/config/redis.yml'))

@@ -1,2 +1,6 @@
 profile_update_prompt.txt: src/prompt/profile_update_prompt.txt
 get_student_reference_prompt.txt: src/prompt/get_student_reference_prompt.txt
+base_chat_prompt.txt: src/prompt/base_chat_prompt.txt
+generate_session_title_prompt.txt: src/prompt/generate_session_title_prompt.txt
+
+

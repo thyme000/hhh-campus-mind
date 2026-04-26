@@ -1,8 +1,13 @@
 # 业务层后端配置
 BACKEND_BASE_URL: http://localhost:8080
-PROFILE_CALLBACK_API_PATH: /internal/profile/ai-result
 INTERNAL_API_TOKEN: T000132333
 
 # 请求配置
 REQUEST_TIMEOUT_SECONDS: 8
 CONSUME_RETRY_SECONDS: 5
+
+# 回传学生画像更新结果
+PROFILE_CALLBACK_API_PATH: /internal/profile/ai-result
+
+# 回传生成会话标题结果
+GENERATE_SESSION_TITLE_CALLBACK_API_PATH: /internal/session/ai-title

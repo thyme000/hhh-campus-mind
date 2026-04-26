@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from domain.TriggerTypeEnum import TriggerTypeEnum
+from src.domain.TriggerTypeEnum import TriggerTypeEnum
 
 
 @dataclass

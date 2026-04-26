@@ -19,8 +19,15 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(
 ))
 channel = connection.channel()
 
-channel.queue_declare(queue=rabbitmq_config("PROFILE_UPDATE_QUEUE"), durable=True)  # 如果是持久化队列就是True
+channel.exchange_declare(exchange=rabbitmq_config["PROFILE_UPDATE_EXCHANGE"], exchange_type='direct', durable=True)
+channel.queue_declare(queue=rabbitmq_config["PROFILE_UPDATE_QUEUE"], durable=True)  # 如果是持久化队列就是True
 
+# 绑定
+channel.queue_bind(
+    queue=rabbitmq_config["PROFILE_UPDATE_QUEUE"],
+    exchange=rabbitmq_config["PROFILE_UPDATE_EXCHANGE"],
+    routing_key=rabbitmq_config["PROFILE_UPDATE_ROUTING_KEY"]
+)
 
 def callback(ch, method, properties, body):
     try:
@@ -36,6 +43,6 @@ def callback(ch, method, properties, body):
         logger.error(f"消费更新学生画像消息失败, {e}")
 
 
-channel.basic_consume(rabbitmq_config("PROFILE_UPDATE_QUEUE"), callback)
+channel.basic_consume(rabbitmq_config["PROFILE_UPDATE_QUEUE"], callback)
 logging.info("开始监听更新学生画像消息")
 channel.start_consuming()

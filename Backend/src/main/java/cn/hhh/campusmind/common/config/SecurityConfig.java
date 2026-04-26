@@ -16,7 +16,8 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
-                                "/login"
+                                "/login",
+                                "/internal/"
                         ).permitAll()
                         // 其他接口还是需要认证
                         .anyRequest().authenticated()

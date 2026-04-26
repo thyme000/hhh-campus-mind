@@ -33,7 +33,20 @@ public class GlobalExceptionHandler {
         return Result.fail("无权限异常");
     }
 
-    // 处理其他异常类型
+    /**
+     * 处理会话异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public Result<?> handleIllegalArgumentException(IllegalArgumentException e) {
+        log.error("会话异常: {}", e.getMessage(), e);
+        return Result.fail("会话异常");
+    }
+
+    /**
+     * 处理其他异常类型
+     */
     @ExceptionHandler(Exception.class)
     public Result<?> handleException(Exception e) {
     log.error("异常: {}", e.getMessage(), e);

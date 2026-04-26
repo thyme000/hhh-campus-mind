@@ -9,7 +9,7 @@ from src.mq.messages.profile_update_message import TriggerUpdateEventMessage
 from src.utils.parse_json import parse_json
 from src.utils.prompt_loader import load_prompt
 
-agent = create_agent(
+profile_update_agent = create_agent(
     model=chat_model,
     tools=[],
     system_prompt=load_prompt("profile_update_prompt.txt"),
@@ -26,7 +26,7 @@ def diagnostic_update_profile(profile_update_msg: TriggerUpdateEventMessage) -> 
     if not isinstance(prompt_input, str):
         prompt_input = json.dumps(prompt_input, ensure_ascii=False)
 
-    result = agent.invoke({"messages": [{"role": "user", "content": prompt_input}]})
+    result = profile_update_agent.invoke({"messages": [{"role": "user", "content": prompt_input}]})
     messages = result.get("messages") or []
 
     logger.info(f"诊断是否需要更新画像结果: {result}")

@@ -37,7 +37,7 @@ class JavaBackendHttpClient:
         timeout_seconds: Optional[int] = None,
     ) -> None:
         self.base_url = (base_url or backend_config.get("BACKEND_BASE_URL", "http://localhost:8080")).rstrip("/")
-        self.internal_token = internal_token if internal_token is not None else backend_config.get("INTERNAL_API_TOKEN", "")
+        self.internal_api_token = internal_token if internal_token is not None else backend_config.get("INTERNAL_API_TOKEN", "")
         self.timeout_seconds = int(timeout_seconds or backend_config.get("REQUEST_TIMEOUT_SECONDS", 8))
 
         self.session = requests.Session()
@@ -53,8 +53,8 @@ class JavaBackendHttpClient:
 
     def _build_headers(self, extra_headers: Optional[Dict[str, str]] = None) -> Dict[str, str]:
         headers = {"Content-Type": "application/json"}
-        if self.internal_token:
-            headers["Internal-Token"] = self.internal_token
+        if self.internal_api_token:
+            headers["Internal-API-Token"] = self.internal_api_token
         if extra_headers:
             headers.update(extra_headers)
         return headers
@@ -180,6 +180,17 @@ class JavaBackendHttpClient:
         回调 AI 画像更新结果。
         """
         path = backend_config.get("PROFILE_CALLBACK_API_PATH")
+        return self.post(
+            path=path,
+            data=json.dumps(result_payload, ensure_ascii=False),
+            headers={"Content-Type": "application/json"},
+        )
+
+    def callback_generate_session_title_result(self, result_payload: Dict[str, Any]) -> HttpResult:
+        """
+        回调 AI 会话标题生成结果。
+        """
+        path = backend_config.get("GENERATE_SESSION_TITLE_CALLBACK_API_PATH")
         return self.post(
             path=path,
             data=json.dumps(result_payload, ensure_ascii=False),

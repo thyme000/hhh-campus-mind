@@ -1,9 +1,10 @@
 import json
+import logging
 
 from langchain.agents import create_agent
 
-from domain.TriggerTypeEnum import TriggerTypeEnum
-from src.agents.profile_update_agent.tools.get_student_reference import get_student_profile, list_latest_snapshots
+from src.domain.TriggerTypeEnum import TriggerTypeEnum
+from src.utils.get_student_reference import get_student_profile, list_latest_snapshots
 from src.agents.summary_agent.domain.student_reference_for_summary import StudentReferenceForSummary
 from src.agents.summary_agent.domain.summary_student_reference_result import (
     ContextSummary,
@@ -176,6 +177,37 @@ def get_student_reference(user_id: int, trigger_event: TriggerTypeEnum, ref_id: 
         ),
     )
 
+def generate_session_title(user_id: int, session_id: int, context_text: str) -> str:
+    """根据学生上下文总结生成会话标题"""
+
+    # 生成标题
+    agent = create_agent(
+        model=chat_model,
+        tools=[],
+        system_prompt=load_prompt("generate_session_title_prompt.txt"),
+    )
+    result = agent.invoke({
+        "messages": [
+            {
+                "role": "user",
+                "content": context_text,
+            }
+        ]
+    })
+
+    # 提取消息内容
+    messages = result.get("messages") or []
+
+    logger.info(f"生成标题为: {result}")
+
+    content = ""
+    for m in reversed(messages):
+        c = getattr(m, "content", None)
+        if isinstance(c, str) and c.strip():
+            content = c.strip()
+            break
+
+    return content
 
 
 

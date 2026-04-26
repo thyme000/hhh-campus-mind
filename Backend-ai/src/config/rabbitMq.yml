@@ -1,4 +1,11 @@
 # 消息配置
+
+# 学生画像更新
 PROFILE_UPDATE_EXCHANGE: student_profile_update_exchange
 PROFILE_UPDATE_QUEUE: student_profile_update_queue
 PROFILE_UPDATE_ROUTING_KEY: student_profile_update_routing_key
+
+# 生成会话标题
+GENERATE_SESSION_TITLE_ROUTING_KEY: generate_session_title_routing_key
+GENERATE_SESSION_TITLE_EXCHANGE: generate_session_title_exchange
+GENERATE_SESSION_TITLE_QUEUE: generate_session_title_queue

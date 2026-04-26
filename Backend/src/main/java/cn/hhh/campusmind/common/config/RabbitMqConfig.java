@@ -1,6 +1,6 @@
 package cn.hhh.campusmind.common.config;
 
-import cn.hhh.campusmind.common.constants.RabbbitMqConstants;
+import cn.hhh.campusmind.common.constants.RabbitMqConstants;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -24,19 +24,19 @@ public class RabbitMqConfig {
 
     @Bean
     public DirectExchange studentProfileUpdateExchange() {
-        return new DirectExchange(RabbbitMqConstants.STUDENT_PROFILE_UPDATE_EXCHANGE, true, false);
+        return new DirectExchange(RabbitMqConstants.STUDENT_PROFILE_UPDATE_EXCHANGE, true, false);
     }
 
     @Bean
     public Queue studentProfileUpdateQueue() {
-        return new Queue(RabbbitMqConstants.STUDENT_PROFILE_UPDATE_QUEUE, true);
+        return new Queue(RabbitMqConstants.STUDENT_PROFILE_UPDATE_QUEUE, true);
     }
 
     @Bean
     public Binding studentProfileUpdateBinding(Queue studentProfileUpdateQueue, DirectExchange studentProfileUpdateExchange) {
         return BindingBuilder.bind(studentProfileUpdateQueue)
                 .to(studentProfileUpdateExchange)
-                .with(RabbbitMqConstants.STUDENT_PROFILE_UPDATE_ROUTING_KEY);
+                .with(RabbitMqConstants.STUDENT_PROFILE_UPDATE_ROUTING_KEY);
     }
 
     @Bean

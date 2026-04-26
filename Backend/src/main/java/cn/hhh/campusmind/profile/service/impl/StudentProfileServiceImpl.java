@@ -1,6 +1,6 @@
 package cn.hhh.campusmind.profile.service.impl;
 
-import cn.hhh.campusmind.common.constants.RabbbitMqConstants;
+import cn.hhh.campusmind.common.constants.RabbitMqConstants;
 import cn.hhh.campusmind.common.result.Result;
 import cn.hhh.campusmind.common.utils.UserContext;
 import cn.hhh.campusmind.profile.domain.dto.EventDTO;
@@ -164,8 +164,8 @@ public class StudentProfileServiceImpl extends ServiceImpl<StudentProfileMapper,
                 .userId(userId).build();
 
         rabbitTemplate.convertAndSend(
-                RabbbitMqConstants.STUDENT_PROFILE_UPDATE_EXCHANGE,
-                RabbbitMqConstants.STUDENT_PROFILE_UPDATE_ROUTING_KEY,
+                RabbitMqConstants.STUDENT_PROFILE_UPDATE_EXCHANGE,
+                RabbitMqConstants.STUDENT_PROFILE_UPDATE_ROUTING_KEY,
                 message
         );
         return Result.success();
