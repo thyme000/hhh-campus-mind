@@ -15,6 +15,8 @@ import {
   renameSessionApi,
   streamChatApi
 } from '@/api/chat'
+import { deleteDocumentApi, restoreDocumentApi, uploadDocumentApi } from '@/api/document'
+import { getOssStsApi, uploadFileBySts } from '@/api/oss'
 import type { ChatMessageItem, SessionItem } from '@/types/api'
 
 interface UiMessage {
@@ -35,6 +37,17 @@ const isSending = ref(false)
 const errorMessage = ref('')
 const listLoading = ref(false)
 const messageContainer = ref<HTMLElement | null>(null)
+const isSubmittingDoc = ref(false)
+const docActionMessage = ref('')
+const docActionError = ref('')
+const documentIdInput = ref('')
+const selectedDocFile = ref<File | null>(null)
+const documentForm = ref({
+  fileName: '',
+  fileType: '',
+  courseId: '',
+  traceId: ''
+})
 
 const activeSession = computed(() =>
   sessions.value.find((item) => item.sessionId === activeSessionId.value) ?? null
@@ -189,6 +202,114 @@ const createTraceId = () => {
     return crypto.randomUUID()
   }
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`
+}
+
+const inferFileTypeFromName = (fileName: string) => {
+  const lower = fileName.trim().toLowerCase()
+  if (lower.endsWith('.pdf')) return 'application/pdf'
+  if (lower.endsWith('.txt')) return 'text/plain'
+  if (lower.endsWith('.md') || lower.endsWith('.markdown')) return 'text/markdown'
+  return 'application/octet-stream'
+}
+
+const onFileNameBlur = () => {
+  if (!documentForm.value.fileType.trim() && documentForm.value.fileName.trim()) {
+    documentForm.value.fileType = inferFileTypeFromName(documentForm.value.fileName)
+  }
+}
+
+const onSelectDocFile = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0] ?? null
+  selectedDocFile.value = file
+  if (file) {
+    documentForm.value.fileName = file.name
+    if (!documentForm.value.fileType.trim()) {
+      documentForm.value.fileType = file.type || inferFileTypeFromName(file.name)
+    }
+  }
+}
+
+const toHex = (bytes: Uint8Array) => Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('')
+
+const calcFileSha256 = async (file: File) => {
+  const buffer = await file.arrayBuffer()
+  const digest = await crypto.subtle.digest('SHA-256', buffer)
+  return toHex(new Uint8Array(digest))
+}
+
+const submitUploadDocument = async () => {
+  const file = selectedDocFile.value
+  if (!file) {
+    docActionError.value = '请先选择要上传的文件'
+    docActionMessage.value = ''
+    return
+  }
+
+  const payload = {
+    objectKey: '',
+    fileName: file.name,
+    fileSize: file.size,
+    fileType: documentForm.value.fileType.trim() || file.type || inferFileTypeFromName(file.name),
+    courseId: Number(documentForm.value.courseId),
+    fileSha256: '',
+    traceId: documentForm.value.traceId.trim() || createTraceId()
+  }
+  if (
+    !payload.fileName ||
+    !payload.fileType ||
+    !Number.isFinite(payload.fileSize) ||
+    payload.fileSize <= 0 ||
+    !Number.isFinite(payload.courseId) ||
+    payload.courseId <= 0
+  ) {
+    docActionError.value = '请完整填写上传参数（文件、类型、课程ID）'
+    docActionMessage.value = ''
+    return
+  }
+
+  isSubmittingDoc.value = true
+  docActionError.value = ''
+  docActionMessage.value = ''
+  try {
+    const sts = await getOssStsApi('file')
+    const objectKey = await uploadFileBySts(file, sts)
+    const fileSha256 = await calcFileSha256(file)
+    payload.objectKey = objectKey
+    payload.fileSha256 = fileSha256
+
+    await uploadDocumentApi(payload)
+    docActionMessage.value = `文档上传任务已提交，objectKey: ${objectKey}`
+  } catch (error) {
+    docActionError.value = error instanceof Error ? error.message : '上传失败'
+  } finally {
+    isSubmittingDoc.value = false
+  }
+}
+
+const runDocumentAction = async (action: 'delete' | 'restore') => {
+  const id = documentIdInput.value.trim()
+  if (!id) {
+    docActionError.value = '请先输入 documentId'
+    docActionMessage.value = ''
+    return
+  }
+  isSubmittingDoc.value = true
+  docActionError.value = ''
+  docActionMessage.value = ''
+  try {
+    if (action === 'delete') {
+      await deleteDocumentApi(id)
+      docActionMessage.value = '删除成功'
+    } else {
+      await restoreDocumentApi(id)
+      docActionMessage.value = '恢复成功'
+    }
+  } catch (error) {
+    docActionError.value = error instanceof Error ? error.message : '操作失败'
+  } finally {
+    isSubmittingDoc.value = false
+  }
 }
 
 const sendMessage = async () => {
@@ -426,6 +547,88 @@ onMounted(async () => {
           </div>
         </div>
       </section>
+
+      <aside class="w-96 border-l border-slate-200 bg-white p-4 overflow-y-auto">
+        <h3 class="text-base font-semibold text-slate-800">知识库文档</h3>
+        <p class="text-xs text-slate-500 mt-1">先取 STS 再上传 OSS，最后调用 `/api/document/upload`。</p>
+
+        <div class="mt-4 space-y-3">
+          <input type="file" class="w-full text-sm text-slate-600" @change="onSelectDocFile" />
+          <input
+            v-model="documentForm.fileName"
+            type="text"
+            placeholder="文件名（自动填充）"
+            class="w-full h-10 rounded-md border border-slate-300 px-3 text-sm bg-slate-50 focus:outline-none"
+            readonly
+            @blur="onFileNameBlur"
+          />
+          <div class="grid grid-cols-2 gap-2">
+            <input
+              :value="selectedDocFile?.size || ''"
+              type="text"
+              placeholder="文件大小（自动）"
+              class="w-full h-10 rounded-md border border-slate-300 px-3 text-sm bg-slate-50 focus:outline-none"
+              readonly
+            />
+            <input
+              v-model="documentForm.courseId"
+              type="number"
+              min="1"
+              placeholder="课程ID"
+              class="w-full h-10 rounded-md border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+            />
+          </div>
+          <input
+            v-model="documentForm.fileType"
+            type="text"
+            placeholder="MIME（自动填充，可改）"
+            class="w-full h-10 rounded-md border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+          />
+          <input
+            v-model="documentForm.traceId"
+            type="text"
+            placeholder="traceId（可空，默认自动生成）"
+            class="w-full h-10 rounded-md border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+          />
+          <button
+            type="button"
+            class="w-full h-10 rounded-md bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 disabled:opacity-60"
+            :disabled="isSubmittingDoc"
+            @click="submitUploadDocument"
+          >
+            提交上传
+          </button>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-slate-200 space-y-2">
+          <input
+            v-model="documentIdInput"
+            type="text"
+            placeholder="documentId"
+            class="w-full h-10 rounded-md border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+          />
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              class="h-10 rounded-md border border-rose-300 text-rose-700 text-sm hover:bg-rose-50 disabled:opacity-60"
+              :disabled="isSubmittingDoc"
+              @click="runDocumentAction('delete')"
+            >
+              删除文档
+            </button>
+            <button
+              type="button"
+              class="h-10 rounded-md border border-emerald-300 text-emerald-700 text-sm hover:bg-emerald-50 disabled:opacity-60"
+              :disabled="isSubmittingDoc"
+              @click="runDocumentAction('restore')"
+            >
+              恢复文档
+            </button>
+          </div>
+          <p v-if="docActionMessage" class="text-sm text-emerald-600">{{ docActionMessage }}</p>
+          <p v-if="docActionError" class="text-sm text-rose-600">{{ docActionError }}</p>
+        </div>
+      </aside>
     </main>
   </div>
 </template>

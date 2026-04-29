@@ -53,6 +53,7 @@ class EmbedModelFactory(BaseModelFactory):
 chat_model = ChatModelFactory().generator()
 embed_model = EmbedModelFactory().generator()
 
+# 用来重排列的模型
 reranker_model = None
 
 if __name__ == '__main__':

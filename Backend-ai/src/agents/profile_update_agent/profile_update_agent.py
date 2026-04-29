@@ -6,8 +6,8 @@ from src.agents.profile_update_agent.domain.profile_update_diagnostic_results im
 from src.common.factory import chat_model
 from src.common.logger_handler import logger
 from src.mq.messages.profile_update_message import TriggerUpdateEventMessage
-from src.utils.parse_json import parse_json
-from src.utils.prompt_loader import load_prompt
+from src.common.utils.parse_json import parse_json
+from src.common.utils.prompt_loader import load_prompt
 
 profile_update_agent = create_agent(
     model=chat_model,

@@ -1,6 +1,7 @@
 package cn.hhh.campusmind.auth.domain.dto;
 
 import cn.hhh.campusmind.user.domain.enums.UserType;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

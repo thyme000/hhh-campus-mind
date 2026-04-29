@@ -174,7 +174,7 @@ public class AiChatMessageServiceImpl extends ServiceImpl<AiChatMessageMapper, A
                     continue;
                 }
                 if (line.startsWith("event:")) {
-                    event = line.substring("event:".length());
+                    event = line.substring("event:".length()).trim();
                 } else if (line.startsWith("data:")) {
                     String chunk = line.substring("data:".length());
                     if (!dataBuilder.isEmpty()) {

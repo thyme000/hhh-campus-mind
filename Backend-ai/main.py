@@ -14,6 +14,9 @@ def start_mq_consumer() -> None:
     # 注意：该模块含有启动消费的顶层逻辑，导入即启动（阻塞）
     importlib.import_module("src.mq.profile_update_consumer")
 
+def start_chunk_document_consumer() -> None:
+    importlib.import_module("src.mq.chunk_document_consumer")
+
 
 def start_generate_session_title_consumer() -> None:
     # 注意：该模块含有启动消费的顶层逻辑，导入即启动（阻塞）
@@ -83,6 +86,7 @@ def main() -> int:
             processes.append(
                 _run_target("generate_session_title_consumer", start_generate_session_title_consumer)
             )
+            processes.append(_run_target("chunk_document_consumer", start_chunk_document_consumer))
 
         if not processes:
             logging.error("没有可启动的目标进程")

@@ -1,0 +1,11 @@
+# 文本splitter配置
+txt_chunk_size: 1000
+txt_chunk_overlap: 200
+txt_separators: ["\n\n", "\n", "。", "！", "？", "!", "?", " ", ""]
+
+# PDF splitter 配置
+pdf_chunk_size: 800 # 每个分块的最大字符数
+pdf_chunk_overlap: 120 # 分块之间的重叠字符数
+pdf_separators: ["\n\n", "\n", "。", "！", "？", "；", "，", " ", ""] # 文本分割符
+pdf_enable_page_mode: true # 是否启用按页分割模式
+pdf_page_split_tokens: ["\f"] # 按页分割符

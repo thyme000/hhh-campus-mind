@@ -1,10 +1,9 @@
 import json
-import logging
 
 from langchain.agents import create_agent
 
 from src.domain.TriggerTypeEnum import TriggerTypeEnum
-from src.utils.get_student_reference import get_student_profile, list_latest_snapshots
+from src.tools.get_student_reference import get_student_profile, list_latest_snapshots
 from src.agents.summary_agent.domain.student_reference_for_summary import StudentReferenceForSummary
 from src.agents.summary_agent.domain.summary_student_reference_result import (
     ContextSummary,
@@ -18,7 +17,7 @@ from src.agents.summary_agent.domain.summary_student_reference_result import (
 )
 from src.common.factory import chat_model
 from src.common.logger_handler import logger
-from src.utils.prompt_loader import load_prompt
+from src.common.utils.prompt_loader import load_prompt
 
 
 def _safe_parse_json(content: str) -> dict:

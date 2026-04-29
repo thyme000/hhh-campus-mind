@@ -122,7 +122,17 @@ class XfyunEmbeddings(Embeddings):
         return _parse_vector(resp.json())
 
     def embed_query(self, text: str) -> List[float]:
+        """
+        用户输入向量化
+        :param text:
+        :return:
+        """
         return self._embed_one(text=text, domain="query")
 
     def embed_documents(self, texts: Sequence[str]) -> List[List[float]]:
+        """
+        文档向量化
+        :param texts:
+        :return:
+        """
         return [self._embed_one(text=t, domain="para") for t in texts]

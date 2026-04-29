@@ -30,7 +30,7 @@ public class OtherServiceImpl implements IOtherService {
     @Override
     public OssStsVO issueUploadSts(String bizType) {
 
-        Long userId = Long.valueOf(UserContext.getUserId());
+        Long userId = UserContext.getUserId();
 
         String dir = null;
         if (WORKDIR.equals(bizType)) {
@@ -46,7 +46,7 @@ public class OtherServiceImpl implements IOtherService {
 
 
         DefaultProfile profile = DefaultProfile.getProfile(
-                "cn-guangzhou",
+                "ap-southeast-1",
                 accessKeyId,
                 accessKeySecret
         );
@@ -68,7 +68,7 @@ public class OtherServiceImpl implements IOtherService {
         vo.setAccessKeySecret(response.getCredentials().getAccessKeySecret());
         vo.setSecurityToken(response.getCredentials().getSecurityToken());
         vo.setExpiration(response.getCredentials().getExpiration());
-        vo.setRegion("cn-guangzhou");
+        vo.setRegion("ap-southeast-1");
         vo.setBucket(aliOssProperties.getBucketName());
         vo.setEndpoint(aliOssProperties.getEndpoint());
         vo.setDir(dir);

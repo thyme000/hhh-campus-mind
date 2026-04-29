@@ -2,8 +2,8 @@ package cn.hhh.campusmind.admin.service.impl;
 
 import cn.hhh.campusmind.admin.domain.dto.UserDTO;
 import cn.hhh.campusmind.admin.service.IAdminService;
-import cn.hhh.campusmind.college.domain.po.College;
-import cn.hhh.campusmind.college.service.ICollegeService;
+import cn.hhh.campusmind.department.domain.po.College;
+import cn.hhh.campusmind.department.service.ICollegeService;
 import cn.hhh.campusmind.common.result.Result;
 import cn.hhh.campusmind.common.utils.PasswordEncoder;
 import cn.hhh.campusmind.common.utils.UserContext;

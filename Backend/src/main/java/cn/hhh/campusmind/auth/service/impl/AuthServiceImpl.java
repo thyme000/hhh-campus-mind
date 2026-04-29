@@ -2,8 +2,8 @@ package cn.hhh.campusmind.auth.service.impl;
 
 import  cn.hhh.campusmind.auth.domain.dto.LoginDTO;
 import cn.hhh.campusmind.auth.service.IAuthService;
-import cn.hhh.campusmind.college.domain.po.College;
-import cn.hhh.campusmind.college.service.ICollegeService;
+import cn.hhh.campusmind.department.domain.po.College;
+import cn.hhh.campusmind.department.service.ICollegeService;
 import cn.hhh.campusmind.common.constants.RedisConstants;
 import cn.hhh.campusmind.common.result.Result;
 import cn.hhh.campusmind.common.utils.PasswordEncoder;

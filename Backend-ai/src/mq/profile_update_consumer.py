@@ -30,6 +30,14 @@ channel.queue_bind(
 )
 
 def callback(ch, method, properties, body):
+    """
+    更新学生画像
+    :param ch:
+    :param method:
+    :param properties:
+    :param body:
+    :return:
+    """
     try:
         body_parse = body.decode('utf-8')
         logger.info("内容是" + body_parse)

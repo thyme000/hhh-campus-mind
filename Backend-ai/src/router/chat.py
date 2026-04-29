@@ -7,7 +7,6 @@ from langchain_core.messages import AIMessage, AIMessageChunk
 from pydantic import BaseModel
 
 from src.agents.chat_agent.chat_agent import chat_agent
-from src.common.logger_handler import logger
 from src.config.config import backend_config
 from fastapi import APIRouter
 
@@ -50,7 +49,6 @@ def _extract_chunk_text(chunk: object) -> str:
     return content if isinstance(content, str) else ""
 
 
-@chat_router.post("/stream")
 @chat_router.post("/stream")
 def chat_stream(req: ChatRequest, internal_api_token: Optional[str] = Header(default=None, alias="Internal-API-Token")):
     _check_internal_token(internal_api_token)

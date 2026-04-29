@@ -7,7 +7,7 @@ from src.agents.summary_agent.summary_agent import generate_session_title
 from src.common.logger_handler import logger
 from src.domain.session_title_result import SessionTitleResult
 from src.mq.messages.generate_session_title_message import GenerateSessionTitleMessage
-from src.utils.redis_util import get_user_context
+from src.tools.redis_util import get_user_context
 
 
 class GenerateSessionTitleWorkflowState(TypedDict, total=False):
