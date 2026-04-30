@@ -11,11 +11,11 @@ export default defineConfig({
         }
     },
     server: {
-        port: 3000, // 队友原有的端口配置，不动
+        port: 3000,
         proxy: {
             '/api': {
-                target: 'http://localhost:8080', // 只改这一行！指向Java后端的地址
-                changeOrigin: true // 保持不变
+                target: 'http://localhost:8080',
+                changeOrigin: true
             }
         }
     }

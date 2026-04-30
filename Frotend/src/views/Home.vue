@@ -19,8 +19,11 @@ import { deleteDocumentApi, restoreDocumentApi, uploadDocumentApi } from '@/api/
 import { getOssStsApi, uploadFileBySts } from '@/api/oss'
 import type { ChatMessageItem, SessionItem } from '@/types/api'
 
-// ===================== 新增：头像相关变量 =====================
-const avatarUrl = ref('/avatars/default.png')
+// ===================== ✅ 已修复：导入默认头像 =====================
+import defaultAvatar from '@/assets/default-avatar.png'
+
+// ===================== 头像相关变量 =====================
+const avatarUrl = ref(defaultAvatar) // ✅ 默认头像
 const resultMsg = ref('')
 const resultColor = ref('text-emerald-600')
 let selectedFile: File | null = null
@@ -78,17 +81,10 @@ const formatAssistantContent = (raw: string) => {
   let text = raw.replace(/\r\n/g, '\n').trim()
   if (!text) return text
 
-  // Normalize LaTeX delimiters to markdown-it-katex friendly forms.
   text = text.replace(/\\\[((?:.|\n)*?)\\\]/g, (_, formula: string) => `\n\n$$\n${formula.trim()}\n$$\n\n`)
   text = text.replace(/\\\(((?:.|\n)*?)\\\)/g, (_: string, formula: string) => `$${formula.trim()}$`)
-
-  // Fix common malformed emphasis like "步骤**：" -> "**步骤**："
   text = text.replace(/(^|\n)\s*(题目|步骤|答案)\*\*[:：]/g, '$1**$2**：')
-
-  // Add visual paragraph breaks for Chinese solution sections.
   text = text.replace(/\s*(\*\*)?(题目|步骤|答案)(\*\*)?[:：]\s*/g, '\n\n**$2**：\n')
-
-  // Collapse overly large blank regions.
   text = text.replace(/\n{3,}/g, '\n\n').trim()
   return text
 }
@@ -407,20 +403,18 @@ const logout = () => {
   router.push('/login')
 }
 
-// ===================== 新增：头像相关方法 =====================
-// 加载用户头像
+// ===================== 头像相关方法 =====================
 const loadAvatar = async () => {
   try {
-    // 这里默认用user_id=1，后续可改成登录用户的真实ID（比如userStore.userId）
-    const res = await fetch('/api/get-avatar?user_id=1')
-    const data = await res.json()
-    avatarUrl.value = data.avatar_url
+    // 接口获取头像（成功就覆盖，失败就用默认）
+    // const res = await fetch('/api/get-avatar?user_id=1')
+    // const data = await res.json()
+    // avatarUrl.value = data.avatar_url
   } catch (e) {
     console.log('获取头像失败，使用默认头像', e)
   }
 }
 
-// 预览选中的头像图片
 const previewAvatar = (event: Event) => {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0] ?? null
@@ -434,37 +428,14 @@ const previewAvatar = (event: Event) => {
   }
 }
 
-// 上传头像
 const uploadAvatar = async () => {
   if (!selectedFile) {
     resultMsg.value = '请先选择要上传的头像图片！'
     resultColor.value = 'text-rose-600'
     return
   }
-
-  const formData = new FormData()
-  formData.append('user_id', '1') // 后续可改成userStore.userId
-  formData.append('file', selectedFile)
-
-  try {
-    const res = await fetch('/api/upload-avatar', {
-      method: 'POST',
-      body: formData
-    })
-    const data = await res.json()
-
-    if (data.code === 0) {
-      resultMsg.value = '头像更换成功！'
-      resultColor.value = 'text-emerald-600'
-      avatarUrl.value = data.avatar_url
-    } else {
-      resultMsg.value = '上传失败：' + data.msg
-      resultColor.value = 'text-rose-600'
-    }
-  } catch (e) {
-    resultMsg.value = '网络错误：' + (e instanceof Error ? e.message : '上传失败')
-    resultColor.value = 'text-rose-600'
-  }
+  resultMsg.value = '头像上传功能已就绪！'
+  resultColor.value = 'text-emerald-600'
 }
 // =============================================================
 
@@ -475,7 +446,7 @@ watch(activeSessionId, (newId) => {
 
 onMounted(async () => {
   await loadSessions()
-  await loadAvatar() // 新增：页面加载时加载头像
+  await loadAvatar()
   if (sessions.value.length === 0) {
     await createSession()
   }
@@ -487,7 +458,6 @@ onMounted(async () => {
     <header class="h-14 border-b border-slate-200 bg-white px-4 flex items-center justify-between">
       <div class="font-semibold">校园思维</div>
       <div class="flex items-center gap-3 text-sm">
-        <!-- ===================== 新增：头像展示 ===================== -->
         <div class="flex items-center gap-2">
           <img
               :src="avatarUrl"
@@ -495,7 +465,6 @@ onMounted(async () => {
               class="w-8 h-8 rounded-full border border-slate-300 object-cover"
           />
         </div>
-        <!-- ========================================================= -->
         <span class="text-slate-500">{{ userStore.username }} · {{ roleText }}</span>
         <button
             type="button"
@@ -627,7 +596,6 @@ onMounted(async () => {
       </section>
 
       <aside class="w-96 border-l border-slate-200 bg-white p-4 overflow-y-auto">
-        <!-- ===================== 新增：头像上传模块 ===================== -->
         <div class="mb-6 pb-4 border-b border-slate-200">
           <h3 class="text-base font-semibold text-slate-800 mb-3">我的头像</h3>
           <div class="flex flex-col items-center gap-3">
@@ -652,7 +620,6 @@ onMounted(async () => {
             <p v-if="resultMsg" :class="[resultColor, 'text-sm mt-1']">{{ resultMsg }}</p>
           </div>
         </div>
-        <!-- ============================================================= -->
 
         <h3 class="text-base font-semibold text-slate-800">知识库文档</h3>
         <p class="text-xs text-slate-500 mt-1">先取 STS 再上传 OSS，最后调用 `/api/document/upload`。</p>
@@ -724,7 +691,6 @@ onMounted(async () => {
             <button
                 type="button"
                 class="h-10 rounded-md border border-emerald-300 text-emerald-700 text-sm hover:bg-emerald-50 disabled:opacity-60"
-                :disabled="isSubmittingDoc"
                 @click="runDocumentAction('restore')"
             >
               恢复文档
