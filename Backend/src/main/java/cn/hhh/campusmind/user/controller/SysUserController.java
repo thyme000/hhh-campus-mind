@@ -1,20 +1,27 @@
 package cn.hhh.campusmind.user.controller;
 
+import cn.hhh.campusmind.user.service.ISysUserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import java.util.Map;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
-
-/**
- * <p>
- * 系统用户表（学生/教师/管理员）；登录鉴权主体。 前端控制器
- * </p>
- *
- * @author thyme
- * @since 2026-04-19
- */
 @RestController
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class SysUserController {
 
+    private final ISysUserService sysUserService;
+
+    @PostMapping("/upload-avatar")
+    public Map<String, Object> uploadAvatar(
+            @RequestParam("user_id") String userId,
+            @RequestParam("file") MultipartFile file) {
+        return sysUserService.uploadAvatar(userId, file);
+    }
+
+    @GetMapping("/get-avatar")
+    public Map<String, Object> getAvatar(@RequestParam String user_id) {
+        return sysUserService.getAvatar(user_id);
+    }
 }

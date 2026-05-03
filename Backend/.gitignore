@@ -21,7 +21,8 @@ target/
 
 # 本地真实配置（含密码），勿提交
 **/application-local.yml
-
+**/application.yml
+**/application-*.yml
 
 ### NetBeans ###
 /nbproject/private/
@@ -35,7 +36,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-
-
-

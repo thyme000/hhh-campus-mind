@@ -15,7 +15,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
-const avatarUrl = ref('/avatars/default.png')
+// 🔥 这里改成你真实的默认头像路径
+const avatarUrl = ref('@/assets/default-avatar.png')
 const resultText = ref('')
 const resultClass = ref('')
 let selectedFile = null
@@ -23,7 +24,8 @@ let selectedFile = null
 // 页面加载时获取用户头像
 onMounted(async () => {
   try {
-    const res = await fetch('/api/get-avatar?user_id=1')
+    // 🔥 接口路径改成你后端真实的
+    const res = await fetch('/api/user/get-avatar?user_id=1')
     const data = await res.json()
     avatarUrl.value = data.avatar_url
   } catch (e) {
@@ -57,7 +59,8 @@ async function uploadAvatar() {
   formData.append('file', selectedFile)
 
   try {
-    const res = await fetch('/api/upload-avatar', {
+    // 🔥 接口路径改成你后端真实的
+    const res = await fetch('/api/user/upload-avatar', {
       method: 'POST',
       body: formData
     })
